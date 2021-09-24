@@ -44,7 +44,7 @@ public class CallServiceImpl implements CallService {
             Call call = Call.creator(
                             new com.twilio.type.PhoneNumber(mobileNumber),
                             new com.twilio.type.PhoneNumber(twilioSenderNumber),
-                            new URI("http://3cb1-2402-4000-2281-e6cf-dcaf-9390-5a8c-b9cc.ngrok.io/initiate-voice"))
+                            new URI("https://voice-management-service.herokuapp.com/twilio/initiate-voice"))
                     .create();
 
             logger.info("Call initiated Successfully to the number " + mobileNumber);
@@ -64,7 +64,7 @@ public class CallServiceImpl implements CallService {
         TwiML twiml = new VoiceResponse.Builder()
                 .gather(new Gather.Builder()
                         .numDigits(1)
-                        .action("http://7299-2402-4000-2181-f0da-a4c4-75d1-ace1-c497.ngrok.io/gather")
+                        .action("https://voice-management-service.herokuapp.com/twilio/gather")
                         .say(new Say.Builder("For approve, press 1. For reject, press 2.").build())
                         .build()
                 )

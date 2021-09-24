@@ -21,7 +21,7 @@ public class CallController {
     }
 
     @GetMapping
-    public String welcome(){
+    public String welcome() {
         return "Welcome back!";
     }
 

@@ -83,6 +83,8 @@ public class CallServiceImpl implements CallService {
     @Override
     public void getUserResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         VoiceResponse.Builder builder = new VoiceResponse.Builder();
+
+        String callSid = request.getParameter("CallSid");
         String digits = request.getParameter("Digits");
         if (digits != null) {
             switch (digits) {

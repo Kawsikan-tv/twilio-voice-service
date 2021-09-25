@@ -9,9 +9,11 @@ import com.twilio.twiml.voice.Gather;
 import com.twilio.twiml.voice.Redirect;
 import com.twilio.twiml.voice.Say;
 import com.voicemanagementservice.model.CallModel;
+import com.voicemanagementservice.repository.CallRepository;
 import com.voicemanagementservice.service.CallService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ import java.net.URI;
 @Service
 public class CallServiceImpl implements CallService {
 
+    private CallRepository callRepository;
     private static final Logger logger = LoggerFactory.getLogger(CallServiceImpl.class);
 
     @Value("${accountSID}")
@@ -33,6 +36,11 @@ public class CallServiceImpl implements CallService {
 
     @Value("${twilioSenderNumber}")
     private String twilioSenderNumber;
+
+    @Autowired
+    public CallServiceImpl(CallRepository callRepository) {
+        this.callRepository = callRepository;
+    }
 
     @Override
     public String makeCall(CallModel callModel) {
@@ -86,6 +94,8 @@ public class CallServiceImpl implements CallService {
 
         String callSid = request.getParameter("CallSid");
         String digits = request.getParameter("Digits");
+        String to = request.getParameter("To");
+
         if (digits != null) {
             switch (digits) {
                 case "1":
@@ -102,6 +112,11 @@ public class CallServiceImpl implements CallService {
         response.setContentType("application/xml");
         try {
             response.getWriter().print(builder.build().toXml());
+            CallModel callModel = new CallModel();
+            callModel.setCallSID(callSid);
+            callModel.setDigits(digits);
+            callModel.setMobileNumber(to);
+            callRepository.save(callModel);
         } catch (TwiMLException e) {
             throw new RuntimeException(e);
         }

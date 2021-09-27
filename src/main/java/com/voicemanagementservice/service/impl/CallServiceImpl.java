@@ -108,7 +108,7 @@ public class CallServiceImpl implements CallService {
                     break;
                 default:
                     builder.say(new Say.Builder("Sorry, this is default message.").build());
-                    builder.redirect(new Redirect.Builder("/voice").build());
+                    builder.redirect(new Redirect.Builder("/twilio/initiate-voice").build());
                     break;
             }
         } else {

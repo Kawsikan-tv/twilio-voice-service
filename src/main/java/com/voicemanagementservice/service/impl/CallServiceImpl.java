@@ -25,7 +25,7 @@ import java.net.URI;
 @Service
 public class CallServiceImpl implements CallService {
 
-    private CallRepository callRepository;
+//    private CallRepository callRepository;
     private static final Logger logger = LoggerFactory.getLogger(CallServiceImpl.class);
 
     @Value("${accountSID}")
@@ -37,10 +37,10 @@ public class CallServiceImpl implements CallService {
     @Value("${twilioSenderNumber}")
     private String twilioSenderNumber;
 
-    @Autowired
-    public CallServiceImpl(CallRepository callRepository) {
-        this.callRepository = callRepository;
-    }
+//    @Autowired
+//    public CallServiceImpl(CallRepository callRepository) {
+//        this.callRepository = callRepository;
+//    }
 
     @Override
     public String makeCall(CallModel callModel) {
@@ -69,6 +69,7 @@ public class CallServiceImpl implements CallService {
 
     @Override
     public void initiateVoice(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
         TwiML twiml = new VoiceResponse.Builder()
                 .gather(new Gather.Builder()
                         .numDigits(1)
@@ -106,17 +107,23 @@ public class CallServiceImpl implements CallService {
                     break;
                 default:
                     builder.say(new Say.Builder("Sorry, this is default message.").build());
+                    builder.redirect(new Redirect.Builder("/voice").build());
                     break;
             }
+        } else {
+            builder.redirect(new Redirect.Builder("/voice").build());
         }
+
         response.setContentType("application/xml");
+
         try {
             response.getWriter().print(builder.build().toXml());
-            CallModel callModel = new CallModel();
-            callModel.setCallSID(callSid);
-            callModel.setDigits(digits);
-            callModel.setMobileNumber(to);
-            callRepository.save(callModel);
+//            CallModel callModel = new CallModel();
+//            callModel.setCallSID(callSid);
+//            callModel.setDigits(digits);
+//            callModel.setMobileNumber(to);
+//            callRepository.save(callModel);
+
         } catch (TwiMLException e) {
             throw new RuntimeException(e);
         }

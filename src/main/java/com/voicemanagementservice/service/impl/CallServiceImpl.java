@@ -70,11 +70,12 @@ public class CallServiceImpl implements CallService {
     @Override
     public void initiateVoice(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        String voiceMessage = "For approve, press 1. For reject, press 2.";
         TwiML twiml = new VoiceResponse.Builder()
                 .gather(new Gather.Builder()
                         .numDigits(1)
                         .action("https://voice-management-service.herokuapp.com/twilio/gather")
-                        .say(new Say.Builder("For approve, press 1. For reject, press 2.").build())
+                        .say(new Say.Builder(voiceMessage).build())
                         .build()
                 )
                 .redirect(new Redirect

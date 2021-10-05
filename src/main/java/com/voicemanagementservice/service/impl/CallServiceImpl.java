@@ -9,11 +9,9 @@ import com.twilio.twiml.voice.Gather;
 import com.twilio.twiml.voice.Redirect;
 import com.twilio.twiml.voice.Say;
 import com.voicemanagementservice.model.CallModel;
-import com.voicemanagementservice.repository.CallRepository;
 import com.voicemanagementservice.service.CallService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +23,6 @@ import java.net.URI;
 @Service
 public class CallServiceImpl implements CallService {
 
-//    private CallRepository callRepository;
     private static final Logger logger = LoggerFactory.getLogger(CallServiceImpl.class);
 
     @Value("${accountSID}")
@@ -37,10 +34,6 @@ public class CallServiceImpl implements CallService {
     @Value("${twilioSenderNumber}")
     private String twilioSenderNumber;
 
-//    @Autowired
-//    public CallServiceImpl(CallRepository callRepository) {
-//        this.callRepository = callRepository;
-//    }
 
     @Override
     public String makeCall(CallModel callModel) {
@@ -75,7 +68,7 @@ public class CallServiceImpl implements CallService {
                 .gather(new Gather.Builder()
                         .numDigits(1)
                         .action("https://voice-management-service.herokuapp.com/twilio/gather")
-                        .say(new Say.Builder(voiceMessage).build())
+                        .say(new Say.Builder(voiceMessage).voice(Say.Voice.ALICE).build())
                         .build()
                 )
                 .redirect(new Redirect
@@ -101,7 +94,7 @@ public class CallServiceImpl implements CallService {
         if (digits != null) {
             switch (digits) {
                 case "1":
-                    builder.say(new Say.Builder("You selected one.").build());
+                    builder.say(new Say.Builder("You selected one.").voice(Say.Voice.MAN).build());
                     break;
                 case "2":
                     builder.say(new Say.Builder("You selected two.").build());
@@ -112,18 +105,13 @@ public class CallServiceImpl implements CallService {
                     break;
             }
         } else {
-            builder.redirect(new Redirect.Builder("/voice").build());
+            builder.redirect(new Redirect.Builder("/twilio/initiate-voice").build());
         }
 
         response.setContentType("application/xml");
 
         try {
             response.getWriter().print(builder.build().toXml());
-//            CallModel callModel = new CallModel();
-//            callModel.setCallSID(callSid);
-//            callModel.setDigits(digits);
-//            callModel.setMobileNumber(to);
-//            callRepository.save(callModel);
 
         } catch (TwiMLException e) {
             throw new RuntimeException(e);
